@@ -17,26 +17,27 @@ import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link"
 
-interface LoginFormProps {
+interface SignupFormProps {
   className?: string;
-  handleLogin: (formData: FormData) => void | Promise<void>;
+  handleSignup: (formData: FormData) => void | Promise<void>;
   [key: string]: any;
 }
 
-export function LoginForm({
+export function SignupForm({
   className,
-  handleLogin,
+  handleSignup,
   ...props
-}: LoginFormProps) {
+}: SignupFormProps) {
   const [loading, setLoading] = useState(false);
 
   const searchParams = useSearchParams();
   const error = searchParams.get('error');
+  const success = searchParams.get('msg');
 
   const handleSubmit = async (formData: FormData) => {
     setLoading(true);
     try {
-      await handleLogin(formData);
+      await handleSignup(formData);
     } catch (err) {
       setLoading(false);
     }
@@ -65,18 +66,19 @@ export function LoginForm({
                 />
               </div>
               <div className="grid gap-3">
-                <div className="flex items-center">
-                  <Label htmlFor="password">Password</Label>
-                  <Link
-                    href="/auth/forgot-password"
-                    className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
-                  >
-                    Forgot your password?
-                  </Link>
-                </div>
+                <Label htmlFor="password">Password</Label>
                 <Input
                   id="password"
                   name="password"
+                  type="password"
+                  required
+                />
+              </div>
+              <div className="grid gap-3">
+                <Label htmlFor="confirmPassword">Confirm Password</Label>
+                <Input
+                  id="confirmPassword"
+                  name="confirmPassword"
                   type="password"
                   required
                 />
@@ -87,15 +89,21 @@ export function LoginForm({
                     {error}
                   </div>
                 )}
+                {success && (
+                  <div className="text-green-500 text-sm">
+                    {success}
+                  </div>
+                )}
+                
                 <Button type="submit" className="w-full" disabled={loading}>
-                  {loading ? "Logging in..." : "Login"}
+                  {loading ? "Signing up..." : "Sign up"}
                 </Button>
               </div>
             </div>
             <div className="mt-4 text-center text-sm">
-              Don&apos;t have an account?{" "}
-              <Link href="/auth/signup" className="underline underline-offset-4">
-                Sign up
+              Already have an account?{" "}
+              <Link href="/auth/login" className="underline underline-offset-4">
+                Log in
               </Link>
             </div>
           </form>

@@ -7,8 +7,12 @@ export default async function PrivatePage() {
 
   const { data, error } = await supabase.auth.getUser()
   if (error || !data?.user) {
-    redirect('/login')
+    redirect('/auth/login')
   }
 
-  return <p>Hello {data.user.email}</p>
+  return (
+    <div className="flex flex-col items-center justify-center min-h-screen py-2">
+      <h1 className="text-4xl font-bold">Hello {data.user.email}</h1>
+    </div>
+  )
 }
