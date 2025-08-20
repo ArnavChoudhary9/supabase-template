@@ -12,11 +12,11 @@ export default async function login(formData: FormData) {
   const password = formData.get('password')
 
   if (!email || !password) {
-    redirect('/auth/login?error=Email%20and%20password%20are%20required')
+    redirect(`/auth/login?error=${encodeURIComponent("Email and password are required")}`)
   }
 
   if (typeof email !== 'string' || typeof password !== 'string' || !email || !password) {
-    redirect('/auth/login?error=Invalid%20email%20or%20password')
+    redirect(`/auth/login?error=${encodeURIComponent("Invalid email or password")}`)
   }
   
   const data = {

@@ -7,37 +7,39 @@ import {
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
+  CardTitle
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
-import { useState } from "react";
+import { useState } from "react"
+import { useSearchParams } from "next/navigation"
 
-import { useSearchParams } from "next/navigation";
-import Link from "next/link"
-
-interface SignupFormProps extends React.ComponentPropsWithoutRef<"div"> {
+interface UpdatePasswordFormProps extends React.ComponentPropsWithoutRef<"div"> {
   className?: string;
-  handleSignup: (formData: FormData) => void | Promise<void>;
+  handleUpdatePassword: (formData: FormData) => void | Promise<void>;
   [key: string]: unknown;
 }
 
-export function SignupForm({
+export default function UpdatePasswordForm({
   className,
-  handleSignup,
+  handleUpdatePassword,
   ...props
-}: SignupFormProps) {
+}: UpdatePasswordFormProps) {
+
   const [loading, setLoading] = useState(false);
 
   const searchParams = useSearchParams();
   const error = searchParams.get('error');
-  const success = searchParams.get('msg');
 
   const handleSubmit = async (formData: FormData) => {
     setLoading(true);
     try {
-      await handleSignup(formData);
+      // Add 'url' as a parameter in form data
+      const url = window.location.href;
+      formData.append('url', url);
+
+      await handleUpdatePassword(formData);
     } catch {
       setLoading(false);
     }
@@ -56,17 +58,7 @@ export function SignupForm({
           <form action={handleSubmit}>
             <div className="flex flex-col gap-6">
               <div className="grid gap-3">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  placeholder="m@example.com"
-                  required
-                />
-              </div>
-              <div className="grid gap-3">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password">New Password</Label>
                 <Input
                   id="password"
                   name="password"
@@ -74,41 +66,27 @@ export function SignupForm({
                   required
                 />
               </div>
+
               <div className="grid gap-3">
-                <Label htmlFor="confirmPassword">Confirm Password</Label>
+                <Label htmlFor="repeat-password">Repeat Password</Label>
                 <Input
-                  id="confirmPassword"
-                  name="confirmPassword"
+                  id="repeat-password"
+                  name="repeat-password"
                   type="password"
                   required
                 />
               </div>
-              <div className="flex flex-col gap-3">
-                {error && (
-                  <div className="text-red-500 text-sm">
-                    {error}
-                  </div>
-                )}
-                {success && (
-                  <div className="text-green-500 text-sm">
-                    {success}
-                  </div>
-                )}
 
+              {error && <p className="text-sm text-red-500">{error}</p>}
+              <div className="flex flex-col gap-3">
                 <Button type="submit" className="w-full" disabled={loading}>
-                  {loading ? "Signing up..." : "Sign up"}
+                  {loading ? "Updating..." : "Update Password"}
                 </Button>
               </div>
-            </div>
-            <div className="mt-4 text-center text-sm">
-              Already have an account?{" "}
-              <Link href="/auth/login" className="underline underline-offset-4">
-                Log in
-              </Link>
             </div>
           </form>
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

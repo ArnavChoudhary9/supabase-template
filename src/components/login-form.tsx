@@ -12,15 +12,15 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 import { useSearchParams } from "next/navigation";
 import Link from "next/link"
 
-interface LoginFormProps {
+interface LoginFormProps extends React.ComponentPropsWithoutRef<"div"> {
   className?: string;
   handleLogin: (formData: FormData) => void | Promise<void>;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export function LoginForm({
@@ -32,12 +32,13 @@ export function LoginForm({
 
   const searchParams = useSearchParams();
   const error = searchParams.get('error');
+  const success = searchParams.get('msg');
 
   const handleSubmit = async (formData: FormData) => {
     setLoading(true);
     try {
       await handleLogin(formData);
-    } catch (err) {
+    } catch {
       setLoading(false);
     }
   };
@@ -85,6 +86,11 @@ export function LoginForm({
                 {error && (
                   <div className="text-red-500 text-sm">
                     {error}
+                  </div>
+                )}
+                {success && (
+                  <div className="text-green-500 text-sm">
+                    {success}
                   </div>
                 )}
                 <Button type="submit" className="w-full" disabled={loading}>
